@@ -1,6 +1,8 @@
 
 #include <memory> // unique_ptr
 
+#include "utilities.hpp"
+
 namespace sizes {
 // todo: move to a separate header file
 
@@ -8,16 +10,6 @@ const int Kilo = ((size_t)1024);
 const int Mega = KB * KB;
 const int Giga = MB * KB;
 
-};
-
-template<int N>
-struct Range {
-    // todo: move to a separate header file
-    constexpr A() : arr() {
-        for (auto i = 0; i != N; ++i)
-            arr[i] = i; 
-    }
-    constexpr int val[N];
 };
 
 
