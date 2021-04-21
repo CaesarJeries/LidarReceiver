@@ -25,7 +25,7 @@ def draw_frame(data):
     # memory layout of received packet: | 0 - 1: height | 2 - 3: width | 4 - (height*width - 1): array values |
     arr = np.reshape(arr, (50, 20))
     cv2.imshow('test', arr)
-
+    cv2.waitKey(0)
 
 
 server = Server(on_receive_callback=draw_frame)
