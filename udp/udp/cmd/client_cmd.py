@@ -15,7 +15,12 @@ def main():
     parser = get_argument_parser()
     args = parser.parse_args()
     client = Client(ip = args.ip, port = args.port)
-    client.send('Hello world!')
+
+    while True:
+        data = input()
+        if 'quit' == data:
+            break
+        client.send(data)
 
 if __name__ == '__main__':
     main()
