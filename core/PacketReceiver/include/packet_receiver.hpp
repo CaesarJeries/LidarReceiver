@@ -7,6 +7,7 @@
 #include <memory>
 #include <hash_map>
 
+#include "common.hpp"
 #include "http/sender.hpp"
 #include "http/receiver.hpp"
 
@@ -16,15 +17,11 @@ using std::string;
 
 
 
-
-
 class PacketReceiver {
     
     public:
 
     using byte_t = unsigned char;
-    using ulong_t = unsigned long;
-    using index_t = ulong;
     using string_t = std::string;
     using hash_map_t = std::hash_map; // todo: replace with your own impl
 
