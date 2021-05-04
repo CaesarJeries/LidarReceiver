@@ -2,7 +2,7 @@ import logging
 
 def get_logger(name):
     logger = logging.getLogger(name)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)
 
     formatter = logging.Formatter('(%(asctime)s) [%(filename)s:%(module)s:%(funcName)s:%(lineno)d] - %(message)s')
     fh = logging.FileHandler('udp_test.log')

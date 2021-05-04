@@ -3,7 +3,6 @@
 import udp
 import time
 import numpy as np
-import logging
 from collections import defaultdict
 from udp import Client, get_logger
 
@@ -48,7 +47,7 @@ class LidarDataContainer(object):
                 logger.error(error_msg)
                 raise RuntimeError(error_msg)
             
-            logging.info('Generating random image data')
+            logger.info('Generating random image data')
             self.data[frame_number]['image'] = generate_random_image(self.height, self.width)
             self.data[frame_number]['ranges'] = []
 
@@ -56,7 +55,7 @@ class LidarDataContainer(object):
             
             # generate random ranges for image access
             while free_cells_number > 0:
-                logging.info('Generating random ranges')
+                logger.info('Generating random ranges')
                 # window size of current range
                 random_window_size = np.random.randint(self.min_chunk_size, self.max_chunk_size, 1).item()
                 free_cells_number -= random_window_size
@@ -68,7 +67,7 @@ class LidarDataContainer(object):
                 if range_end > max_size:
                     range_end = max_size
                     random_window_size = range_end - range_start
-                logging.debug('Creating a new range starting from: {}. Window size: {}. Range end: {}'
+                logger.debug('Creating a new range starting from: {}. Window size: {}. Range end: {}'
                              .format(range_start, random_window_size, range_end))
 
                 self.data[frame_number]['ranges'].append((range_start, range_end))
@@ -96,10 +95,10 @@ class LidarDataContainer(object):
             r = ranges.pop()
         else:
             # the frame has been entirely consumed
-            logging.debug('Removing frame from container at index: {}'.format(random_index))
+            logger.debug('Removing frame from container at index: {}'.format(random_index))
             del self.data[random_index]
         
-        logging.debug('Retrieving range at index {}: {}'.format(r, random_index))
+        logger.debug('Retrieving range at index {}: {}'.format(r, random_index))
         
         (start_index, end_index) = r
         return {
@@ -121,12 +120,12 @@ class RandomLidarDataGenerator(object):
     def transmit(self):
         while True:
             next_data_chunk = self.data.get_next()
-            logging.info('Transmitting next chunk of data')
+            logger.info('Transmitting next chunk of data')
             self.client.send(next_data_chunk)
 
             # sleep interval in seconds
             interval = 1. / self.fps
-            logging.debug('Sleeping for {} seconds'.format(interval))
+            logger.debug('Sleeping for {} seconds'.format(interval))
             time.sleep(interval)
 
 
