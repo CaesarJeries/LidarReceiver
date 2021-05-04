@@ -81,6 +81,7 @@ class Receiver {
             throw TransmissionFailureException("Error encountered while receiving packet header: Not all bytes received");
         }
 
+        // todo: is the cast safe? is there an alternative?
         int frameno = *reinterpret_cast<int*>(&m_buffer[0]);
         int start_index = *reinterpret_cast<int*>(&m_buffer[4]);
         int end_index = *reinterpret_cast<int*>(&m_buffer[8]);

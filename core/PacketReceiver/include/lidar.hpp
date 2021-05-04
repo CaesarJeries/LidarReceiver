@@ -4,9 +4,16 @@
 
 namespace caesar {
 
-namespace lidar_emulator {
+namespace lidar_simulator {
 
-constexpr int POINT_CLOUD_SIZE = 1024;
+namespace point_cloud {
+
+constexpr int HEIGHT = 32;
+constexpr int WIDTH = 32;
+constexpr int SIZE = HEIGHT * WIDTH; // 1024
+
+}
+
 constexpr int FRAME_RATE = 15/*fps*/; 
 
 } // namespace caesar
