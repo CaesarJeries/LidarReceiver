@@ -3,7 +3,7 @@
 namespace caesar {
 
 
-Receiver::Receiver(std::string ip = "127.0.0.1", int port = 4242) : m_buffer(MAX_PAYLOAD_SIZE) {
+Receiver::Receiver(std::string ip, int port) : m_buffer(MAX_PAYLOAD_SIZE) {
     m_socket = socket(AF_INET, SOCK_DGRAM, 0);
     m_socket_address.sin_port = htons(port);
     m_socket_address.sin_family = AF_INET;
@@ -29,6 +29,7 @@ Receiver::~Receiver() {
 
 
 void Receiver::listen() {
+loop:
     ssize_t received = recvfrom(m_socket, &m_buffer[0], PAYLOAD_HEADER_SIZE, MSG_WAITALL, nullptr, nullptr);
     if (received < 0) {
         std::cerr << std::string("Error encountered while receiving packet header: ") + strerror(errno) << std::endl;
@@ -39,9 +40,13 @@ void Receiver::listen() {
     }
 
     // todo: is the cast safe? is there an alternative?
-    int frameno = *reinterpret_cast<int*>(&m_buffer[0]);
-    int start_index = *reinterpret_cast<int*>(&m_buffer[4]);
-    int end_index = *reinterpret_cast<int*>(&m_buffer[8]);
+    int frameno = ntohl(*reinterpret_cast<int*>(&m_buffer[0]));
+    int start_index = *reinterpret_cast<int*>(&m_buffer[sizeof(int)]);
+    int end_index = *reinterpret_cast<int*>(&m_buffer[2*sizeof(int)]);
+
+    std::clog << "Received values: frameno = " << frameno << \
+                 " , start_index = " << start_index << \
+                 ", end_index = " << end_index << '\n'; 
 
     size_t total_data_size = end_index - start_index;
     received = recvfrom(m_socket, &m_buffer[0], total_data_size, MSG_WAITALL, nullptr, nullptr);
@@ -51,6 +56,9 @@ void Receiver::listen() {
     if (received < total_data_size) {
         throw TransmissionFailureException("Error encountered while receiving packet data: Not all bytes received");
     }
+
+    goto loop;
+
 }
 
 }

@@ -2,7 +2,7 @@
 
 #include "receiver.hpp"
 
-using namespace udp;
+using namespace caesar;
 
 
 /**
@@ -20,6 +20,8 @@ int main () {
 
     try {
         Receiver receiver;
+
+        receiver.listen();
     }
     catch (const std::runtime_error& e) {
         std::cerr << "Caught exception: " << e.what() << std::endl;
