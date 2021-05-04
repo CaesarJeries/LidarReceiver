@@ -5,7 +5,7 @@
 
 namespace caesar {
 
-namespace lidar_emulator {
+namespace lidar_simulator {
 
 struct Point {
     float x, y, z; // 3D coordinates. Can be any value
