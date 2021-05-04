@@ -52,8 +52,9 @@ class Receiver {
 
     private:
 
-    const int MAX_PAYLOAD_SIZE = 1024;
-    const int PAYLOAD_HEADER_SIZE = 12; // frameno, start_index, end_index. 4 bytes each
+    static constexpr int MAX_PAYLOAD_SIZE = 1024;
+    static constexpr int PAYLOAD_HEADER_SIZE = 12; // frameno, start_index, end_index. 4 bytes each
+    static constexpr int MAX_BUFFER_SIZE = PAYLOAD_HEADER_SIZE + MAX_PAYLOAD_SIZE;
     
     socket_t m_socket;
     socket_address_t m_socket_address;

@@ -9,7 +9,7 @@ from udp import Client, get_logger
 logger = get_logger(__name__)
 
 
-def generate_random_image(height=640, width=720):
+def generate_random_image(height=32, width=32):
     size = width * height
     random_image = np.random.randint(0, 256, size, dtype=np.uint8)
     return random_image
@@ -143,7 +143,18 @@ class SequentialLidarDataGenerator(object):
     def transmit(self):
         while True:
             try:
+                frame_num_itr = 0
                 data_element = self.data.pop().tobytes()
+                header = frame_num_itr.to_bytes(4, 'big')
+                start_idx = 0
+                end_index = 32**2 - 1
+                header += start_idx.to_bytes(4, 'big')
+                header += end_index.to_bytes(4, 'big')
+
+                logger.debug('Sending header: {}'.format(header))
+                client.send(header)
+
+                logger.debug('Sending data')
                 client.send(data_element)
                 time.sleep(self.sleep_interval)
             except IndexError:

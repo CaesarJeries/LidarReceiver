@@ -22,9 +22,6 @@ class Client(object):
         logger.debug(data)
         self.socket.sendto(data, (ip, port))
         
-        #data, address = self.socket.recvfrom(port)
-        #logger.info('\nClient received from {}: '.format(address), data.decode('utf-8'), '\n')
-    
     def __del__(self):
         # close the socket
         logger.info('Closing socket')

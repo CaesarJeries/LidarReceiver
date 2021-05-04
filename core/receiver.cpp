@@ -1,3 +1,5 @@
+#include <sstream>
+
 #include "receiver.hpp"
 
 namespace caesar {
@@ -35,27 +37,33 @@ loop:
         std::cerr << std::string("Error encountered while receiving packet header: ") + strerror(errno) << std::endl;
         return;
     }
+
     if (received < PAYLOAD_HEADER_SIZE) {
         throw TransmissionFailureException("Error encountered while receiving packet header: Not all bytes received");
     }
 
     // todo: is the cast safe? is there an alternative?
     int frameno = ntohl(*reinterpret_cast<int*>(&m_buffer[0]));
-    int start_index = *reinterpret_cast<int*>(&m_buffer[sizeof(int)]);
-    int end_index = *reinterpret_cast<int*>(&m_buffer[2*sizeof(int)]);
+    int start_index = ntohl(*reinterpret_cast<int*>(&m_buffer[sizeof(int)]));
+    int end_index = ntohl(*reinterpret_cast<int*>(&m_buffer[2*sizeof(int)]));
 
     std::clog << "Received values: frameno = " << frameno << \
                  " , start_index = " << start_index << \
                  ", end_index = " << end_index << '\n'; 
 
-    size_t total_data_size = end_index - start_index;
+    size_t total_data_size = end_index - start_index + 1;
     received = recvfrom(m_socket, &m_buffer[0], total_data_size, MSG_WAITALL, nullptr, nullptr);
     if (received < 0) {
         throw TransmissionFailureException(std::string("Error encountered while receiving packet data: ") + strerror(errno));
     }
     if (received < total_data_size) {
-        throw TransmissionFailureException("Error encountered while receiving packet data: Not all bytes received");
+        std::stringstream ss;
+
+        ss << "Error encountered while receiving packet data: Not all bytes received: " << received << "/" << total_data_size;
+        throw TransmissionFailureException(ss.str() + strerror(errno));
     }
+
+    std::clog << "Received data chunk\n";
 
     goto loop;
 
