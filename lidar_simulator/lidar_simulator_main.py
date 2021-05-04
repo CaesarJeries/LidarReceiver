@@ -9,7 +9,7 @@ from udp import Client, get_logger
 logger = get_logger(__name__)
 
 
-def generate_random_image(height=32, width=32):
+def generate_random_image(height, width):
     size = width * height
     random_image = np.random.randint(0, 256, size, dtype=np.uint8)
     return random_image
@@ -131,7 +131,7 @@ class RandomLidarDataGenerator(object):
 
 class SequentialLidarDataGenerator(object):
 
-    def __init__(self, client, frame_number=3, height=50, width=20, fps=15):
+    def __init__(self, client, frame_number=30, height=32, width=32, fps=15):
         self.height = height
         self.width = width
         self.fps = fps
@@ -148,8 +148,7 @@ class SequentialLidarDataGenerator(object):
                 header = frame_num_itr.to_bytes(4, 'big')
                 start_idx = 0
                 end_index = 32**2 - 1
-                header += start_idx.to_bytes(4, 'big')
-                header += end_index.to_bytes(4, 'big')
+                header += start_idx.to_bytes(4, 'big') + end_index.to_bytes(4, 'big')
 
                 logger.debug('Sending header: {}'.format(header))
                 client.send(header)

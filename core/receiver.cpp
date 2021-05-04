@@ -39,7 +39,16 @@ loop:
     }
 
     if (received < PAYLOAD_HEADER_SIZE) {
-        throw TransmissionFailureException("Error encountered while receiving packet header: Not all bytes received");
+        std::stringstream ss;
+        ss << "Error encountered while receiving packet header: Not all bytes received: " << received << "/" << PAYLOAD_HEADER_SIZE << '\n';
+        throw TransmissionFailureException(ss.str());
+    }
+
+    if (received > PAYLOAD_HEADER_SIZE) {
+        std::stringstream ss;
+        ss << "Error encountered while receiving packet header: received more than expected (" << received;
+        ss << "): " << PAYLOAD_HEADER_SIZE;
+        throw TransmissionFailureException(ss.str());
     }
 
     // todo: is the cast safe? is there an alternative?
@@ -58,9 +67,8 @@ loop:
     }
     if (received < total_data_size) {
         std::stringstream ss;
-
         ss << "Error encountered while receiving packet data: Not all bytes received: " << received << "/" << total_data_size;
-        throw TransmissionFailureException(ss.str() + strerror(errno));
+        throw TransmissionFailureException(ss.str());
     }
 
     std::clog << "Received data chunk\n";
